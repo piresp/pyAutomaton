@@ -2,7 +2,6 @@
 #so only text and the excel language is in Portuguese because I've develop on a pt-br version
 #The following code take name, cpf, ddd and cellphone, format all the raw data and split in separated new tables,
 #and the best part u can control it from the inputs! just say where the data is! and finally u can lay on the chair and enjoy the process (:
-
 import pyautogui as py
 from time import sleep as sleep
 
@@ -10,17 +9,19 @@ formuleNumb = '=SE(EXT.TEXTO(D1;3;2)<"30";CONCATENAR(ESQUERDA(D1;4);"9";DIREITA(
 concatNumb = '=CONCAT(D1;E1;F1)'
 concatNameCPF = '=CONCAT(B1;" | CPF=";C1)'
 internationalCode = '55'
-py.PAUSE = 0.3
 
-posName = str(input('Posicao da coluna NOME: '))
-posCpf = str(input('Posicao da coluna CPF: '))
-posDdd = str(input('Posicao da coluna DDD: '))
-posFone = str(input('Posicao da coluna TELEFONE: '))
+tablePlaces =	{'name': str(input('Posicao da coluna NOME: ')),
+                'cpf': str(input('Posicao da coluna CPF: ')),
+                'ddd': str(input('Posicao da coluna DDD: ')),
+                'fone': str(input('Posicao da coluna TELEFONE: '))}
+
 archiveLenght = input('Numero total de linhas do ARQUIVO ORIGINAL: ')
 cutLenght = int(input('Numero de linhas dos ARQUIVOS CRIADOS: '))
 cutPieces = int(input('Numero de ARQUIVOS CRIADOS: '))
 
-tablePlaces =	{'name': posName, 'cpf': posCpf, 'ddd': posDdd, 'fone': posFone}
+startsIn = int(input('Valor de I: '))
+
+py.PAUSE = 0.3
 
 def start():  
     sleep(3)
@@ -29,7 +30,10 @@ def start():
     if (screen == False):
         py.alert(text='MOUSE FORA DA TELA PRINCIPAL', title='ALERTA!', button='OK')
         exit()
+        
     sleep(3)
+    py.click()
+    py.hotkey('ctrl', 'home')
 
 def serch(here, there):
     py.hotkey('f5')
@@ -56,7 +60,7 @@ def fill(value, here, there):
     serch(here, there)
     py.hotkey('ctrl', 'd')
 
-def formatNumber(column, value, here, there):
+def formatTable(column, value, here, there):
     newInstance(column)
     fill(value, here, there)
     
@@ -78,7 +82,7 @@ def convToValue(column1, column2):
             bodyConvToValue()
         i += 1
 
-def format(args):
+def sort(args):
     for key, value in args.items():
         if (key == 'name' and value != 'A'):
             replace(value, 'A')
@@ -108,7 +112,7 @@ def save():
         py.hotkey('alt', 'a', 'c', 'y', '2', interval= 0.8)
         py.keyUp('alt')
         
-        py.write(f'PASTA{i}')
+        py.write(f'Pasta {i + startsIn}')
         py.hotkey('enter')
         py.hotkey('ctrl', 'w')
         
@@ -119,12 +123,12 @@ def save():
     py.alert(text='OPERAÇÃO CONCLUIDA', title='ALERTA!', button='OK')
 
 start()
-format(tablePlaces)
+sort(tablePlaces)
 delete('E','CK')
-formatNumber('C', internationalCode, 'C1', f'C{archiveLenght}')
-formatNumber('C', concatNumb, 'C1', f'C{archiveLenght}')
-formatNumber('C', formuleNumb, 'C1', f'C{archiveLenght}')
-formatNumber('A', concatNameCPF, 'A1', f'A{archiveLenght}')
+formatTable('C', internationalCode, 'C1', f'C{archiveLenght}')
+formatTable('C', concatNumb, 'C1', f'C{archiveLenght}')
+formatTable('C', formuleNumb, 'C1', f'C{archiveLenght}')
+formatTable('A', concatNameCPF, 'A1', f'A{archiveLenght}')
 delete('1','1')
 convToValue('A', 'D')
 delete('B', 'C')
